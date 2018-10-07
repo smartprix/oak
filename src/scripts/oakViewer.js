@@ -25,6 +25,7 @@ const omit = [
 	'stack',
 	'createdAt',
 	'errorName',
+	'console',
 ];
 
 const omitCtx = [
@@ -92,6 +93,8 @@ function formatDuration(data) {
 function formatValue(val, indent) {
 	if (val === undefined) return chalk.keyword('gray').bold('undefined');
 	if (val === null) return chalk.keyword('gray').bold('null');
+	if (val === true) return chalk.keyword('yellow').bold('true');
+	if (val === false) return chalk.keyword('yellow').bold('true');
 	if (typeof val === 'number') return chalk.keyword('yellow').bold(val);
 	if (typeof val === 'string') return chalk.keyword('green')(val);
 	if (Array.isArray(val)) return chalk.keyword('gold')(util.inspect(val, {colors: false, compact: true}));
@@ -305,7 +308,6 @@ if (commander.grep) {
 const directory = `${cfg('logstashDir')}/logs`;
 const currentDate = moment().format('YYYY-MM-DD');
 const file = `${directory}/log-${currentDate}.json`;
-console.log(file);
 const stream = tail(file, {
 	numLines: options.lines,
 	watch: true,

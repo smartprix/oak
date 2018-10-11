@@ -213,6 +213,7 @@ function filter(data, line, options) {
 function handleLine(line) {
 	if (!line) return;
 	const data = JSON.parse(line);
+	// eslint-disable-next-line no-console
 	console.log(format(data));
 }
 

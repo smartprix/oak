@@ -32,7 +32,12 @@ class FileLogs extends BasicLogs {
 	log(info) {
 		if (!this.stream) return;
 		if (FileLogs.filterLogs(info, this.level)) return;
-		this.stream.write(FileLogs.formatter(info));
+		try {
+			this.stream.write(FileLogs.formatter(info));
+		}
+		catch (err) {
+			console.error('[FileStream] Could not write to stream', err);
+		}
 	}
 
 	/**

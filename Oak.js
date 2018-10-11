@@ -28,10 +28,10 @@ class Oak {
 	constructor(opts = {}) {
 		if (typeof opts === 'object') {
 			this.instanceOpts = opts;
-			this.instanceOpts.label = this.instanceOpts.label || 'None';
+			this.instanceOpts.label = opts.label || 'None';
 		}
 		else {
-			this.instanceOpts = {label: opts};
+			this.instanceOpts = {label: String(opts)};
 		}
 		this.instanceOpts = _.defaults(this.instanceOpts, globalOptions);
 		this.timers = {};
@@ -81,16 +81,40 @@ class Oak {
 
 	/**
 	 * @param {any[]} args
-	 * @param {string} level
+	 * @param {string|object} level or options object
 	 */
 	_logWithLevel(args, level) {
-		if (typeof args[0] === 'object') {
-			args[0].level = level;
+		if (typeof level === 'string') level = {level};
+		if (typeof args[0] === 'object' && !(args[0] instanceof Error)) {
+			args[0] = _.defaults(args[0], level);
 		}
 		else {
-			args = [{level}, ...args];
+			args.unshift(level);
 		}
 		this.log(...args);
+	}
+
+	/**
+	 * @param {Error} err
+	 * @param {string} [label]
+	 */
+	static _parseError(err, label) {
+		const errorOpts = {
+			level: 'error',
+			stack: err.stack,
+			errorName: err.name || err.constructor.name || '',
+			message: err.message,
+		};
+		if (err.code) {
+			errorOpts.errorCode = err.code;
+		}
+		if (err.statusCode) {
+			_.set(errorOpts, 'ctx.statusCode', err.statusCode);
+		}
+		if (label) {
+			errorOpts.label = label;
+		}
+		return errorOpts;
 	}
 
 	/**
@@ -100,7 +124,7 @@ class Oak {
 	log(...args) {
 		let opts = {};
 		let rest = args;
-		if (typeof args[0] === 'object') {
+		if (typeof args[0] === 'object' && !(args[0] instanceof Error)) {
 			opts = args[0];
 			rest = args.slice(1);
 		}
@@ -109,7 +133,7 @@ class Oak {
 			const arg = rest[i];
 			if (arg instanceof Error) {
 				// Log any errors individually
-				this.error(arg);
+				this.error(Oak._parseError(arg, opts.label));
 				rest[i] = arg.message;
 			}
 		}
@@ -118,7 +142,7 @@ class Oak {
 			opts.originalMessage = opts.message;
 		}
 		opts.message = message;
-		const infoObject = _.defaults(opts, this.instanceOpts);
+		const infoObject = _.defaultsDeep(opts, this.instanceOpts);
 		oakTransports.forEach((t) => {
 			t.log(infoObject);
 		});
@@ -149,10 +173,13 @@ class Oak {
 	}
 
 	/**
-	 * @param {string} key
+	 * @param {string} [key] provide a key else a randomly generated one will be assigned
+	 * @returns {string} the key
 	 */
 	time(key) {
+		if (!key) key = Math.random().toString(36).substring(2);
 		this.timers[key] = Oak.now();
+		return key;
 	}
 
 	/**
@@ -163,17 +190,12 @@ class Oak {
 		const since = this.timers[key];
 		if (since) {
 			const duration = Oak.elapsed(since);
-			if (typeof args[0] === 'object') {
-				args[0].level = 'info';
-				args[0].duration = duration;
-			}
-			else {
-				args = [{level: 'info', duration}, ...args];
-			}
-			this.log(args);
-
+			args.unshift(key);
+			this._logWithLevel(args, {level: 'info', duration});
 			delete this.timers[key];
+			return duration;
 		}
+		return -1;
 	}
 
 	/**
@@ -190,7 +212,7 @@ class Oak {
 	}
 
 	static silly(...args) {
-		this.init().sillyt(...args);
+		this.init().silly(...args);
 	}
 
 	static debug(...args) {
@@ -215,18 +237,19 @@ class Oak {
 
 	/**
 	 * Starts a timer
-	 * @param {string} key
+	 * @param {string} [key]
+	 * @returns {string}
 	 */
 	static time(key) {
-		this.init().time(key);
+		return this.init().time(key);
 	}
 
 	/**
 	 * @param {string} key
 	 * @param {any[]} args
 	 */
-	static timeEnd(key, ...args) {
-		this.init().timeEnd(key, ...args);
+	static timeEnd(...args) {
+		return this.init().timeEnd(...args);
 	}
 }
 

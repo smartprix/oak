@@ -129,14 +129,18 @@ class Oak {
 			rest = args.slice(1);
 		}
 		opts.createdAt = new Date().toISOString();
+		let numErrors = 0;
 		for (let i = 0; i < rest.length; i++) {
 			const arg = rest[i];
 			if (arg instanceof Error) {
 				// Log any errors individually
 				this.error(Oak._parseError(arg, opts.label));
 				rest[i] = arg.message;
+				numErrors++;
 			}
 		}
+		// If only error object, then don't log twice
+		if (numErrors === rest.length) return;
 		const message = util.format(...rest);
 		if (opts.message) {
 			opts.originalMessage = opts.message;

@@ -26,6 +26,7 @@ class Oak {
 	 * @param {object|string} opts Default label if string
 	 */
 	constructor(opts = {}) {
+		this.instanceOpts = {};
 		if (typeof opts === 'object') {
 			this.instanceOpts = opts;
 			this.instanceOpts.label = opts.label || 'None';
@@ -198,6 +199,23 @@ class Oak {
 			return duration;
 		}
 		return -1;
+	}
+
+	/**
+	 * Returns a child logger with the same options as the current one plus any extra provided
+	 * @param {string|object} opts
+	 * @returns {Oak}
+	 */
+	getChild(opts = {}) {
+		let childOpts;
+		if (typeof opts === 'object') {
+			childOpts = opts;
+			childOpts.label = opts.label || 'None';
+		}
+		else {
+			childOpts = {label: String(opts)};
+		}
+		return new Oak(_.defaultsDeep(childOpts, this.instanceOpts));
 	}
 
 	/**

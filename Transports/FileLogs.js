@@ -1,6 +1,8 @@
 import rotatingFileStream from 'rotating-file-stream';
 import BasicLogs from './BasicLogs';
 
+// Oak is not used in this file, because oak itself uses this
+
 class FileLogs extends BasicLogs {
 	static logStreams = {};
 
@@ -36,6 +38,7 @@ class FileLogs extends BasicLogs {
 			this.stream.write(FileLogs.formatter(info));
 		}
 		catch (err) {
+			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] Could not write to stream`, err);
 		}
 	}
@@ -61,12 +64,15 @@ class FileLogs extends BasicLogs {
 			});
 		}
 		catch (err) {
+			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] Could not start file stream`, err);
 		}
 
+		// eslint-disable-next-line no-console
 		console.log(`${new Date().toLocaleString()} [FileStream] silly: New File Write Stream: ${dir}/${table}.json`);
 
 		newStream.on('error', (err) => {
+			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream: ${key},`, err);
 			// reopen stream
 			setImmediate(() => this._getStream({table, regenerate: true, dir}));

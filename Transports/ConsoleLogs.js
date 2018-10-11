@@ -68,7 +68,7 @@ class ConsoleLogs extends BasicLogs {
 	static formatter(info) {
 		const colorIt = this.getColorItFn(info.level);
 		const rest = _.omit(info, omitFromRest);
-		const restStringified = util.format(rest);
+		const restStringified = `\n${util.format(rest)}`;
 
 		const colored = {
 			time: colorIt(new Date(info.createdAt).toLocaleString()),
@@ -81,11 +81,11 @@ class ConsoleLogs extends BasicLogs {
 				}
 				return colorIt(info.message);
 			},
-			duration: colorIt(`${info.duration}ms`, {filter: _.isNil(info.duration)}),
-			rest: colorIt(restStringified, {filter: _.isEmpty(rest)}),
+			duration: colorIt(`${info.duration}ms `, {bright: true, filter: _.isNil(info.duration)}),
+			rest: colorIt(restStringified, {bright: true, filter: _.isEmpty(rest)}),
 		};
 
-		return `${colored.time} ${colored.label}${colored.level}: ${colored.message}${colored.stack}${colored.duration}${colored.rest}`;
+		return `${colored.time} ${colored.label}${colored.level}: ${colored.duration}${colored.message}${colored.stack}${colored.rest}`;
 	}
 
 	/**

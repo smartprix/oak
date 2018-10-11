@@ -96,9 +96,8 @@ class Oak {
 
 	/**
 	 * @param {Error} err
-	 * @param {string} [label]
 	 */
-	static _parseError(err, label) {
+	static _parseError(err) {
 		const errorOpts = {
 			level: 'error',
 			stack: err.stack,
@@ -110,9 +109,6 @@ class Oak {
 		}
 		if (err.statusCode) {
 			_.set(errorOpts, 'ctx.statusCode', err.statusCode);
-		}
-		if (label) {
-			errorOpts.label = label;
 		}
 		return errorOpts;
 	}
@@ -128,24 +124,26 @@ class Oak {
 			opts = args[0];
 			rest = args.slice(1);
 		}
-		opts.createdAt = new Date().toISOString();
 		let numErrors = 0;
 		for (let i = 0; i < rest.length; i++) {
 			const arg = rest[i];
 			if (arg instanceof Error) {
 				// Log any errors individually
-				this.error(Oak._parseError(arg, opts.label));
+				this.error(_.defaults(Oak._parseError(arg), opts));
 				rest[i] = arg.message;
 				numErrors++;
 			}
 		}
 		// If only error object, then don't log twice
-		if (numErrors === rest.length) return;
+		if (numErrors === rest.length && numErrors > 0) return;
 		const message = util.format(...rest);
-		if (opts.message) {
+
+		opts.createdAt = new Date().toISOString();
+		if (opts.message && message) {
 			opts.originalMessage = opts.message;
 		}
-		opts.message = message;
+		opts.message = message || opts.message;
+
 		const infoObject = _.defaultsDeep(opts, this.instanceOpts);
 		oakTransports.forEach((t) => {
 			t.log(infoObject);

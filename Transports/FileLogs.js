@@ -36,7 +36,7 @@ class FileLogs extends BasicLogs {
 			this.stream.write(FileLogs.formatter(info));
 		}
 		catch (err) {
-			console.error('[FileStream] Could not write to stream', err);
+			console.error(`${new Date().toLocaleString()} [FileStream] Could not write to stream`, err);
 		}
 	}
 
@@ -61,13 +61,13 @@ class FileLogs extends BasicLogs {
 			});
 		}
 		catch (err) {
-			console.error('[FileStream] Could not start file stream');
+			console.error(`${new Date().toLocaleString()} [FileStream] Could not start file stream`, err);
 		}
 
-		console.log(`[FileStream] New File Write Stream: ${dir}/${table}.json`);
+		console.log(`${new Date().toLocaleString()} [FileStream] silly: New File Write Stream: ${dir}/${table}.json`);
 
 		newStream.on('error', (err) => {
-			console.error(`[FileStream] Error in file stream: ${key},`, err);
+			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream: ${key},`, err);
 			// reopen stream
 			setImmediate(() => this._getStream({table, regenerate: true, dir}));
 		});

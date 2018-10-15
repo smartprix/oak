@@ -1,8 +1,14 @@
 import {cfg} from 'sm-utils';
+import moment from 'moment';
 import rotatingFileStream from 'rotating-file-stream';
 import BasicLogs from './BasicLogs';
 
 // Oak is not used in this file, because oak itself uses this
+
+function fileNameGenerator() {
+	const currentDate = moment().format('YYYY-MM-DD');
+	return `${currentDate}-${this}.json`;
+}
 
 class FileLogs extends BasicLogs {
 	static logStreams = {};
@@ -58,7 +64,7 @@ class FileLogs extends BasicLogs {
 		let newStream;
 
 		try {
-			newStream = rotatingFileStream(`${table}.json`, {
+			newStream = rotatingFileStream(fileNameGenerator.bind(table), {
 				interval: '1d',
 				maxFiles: 10,
 				path: `${cfg('logstashDir')}/${dir}`,

@@ -40,7 +40,7 @@ class Oak {
 			},
 		};
 		if (err.code) {
-			_.set(obj, 'error.code', err.code);
+			obj.error.code = err.code;
 		}
 		// Model from 'xorm' UserError
 		if (err.model) {
@@ -88,7 +88,7 @@ class Oak {
 					// Log any errors individually
 					const errorObj = Oak._parseError(arg, opts);
 					if (!errorObj.level) errorObj.level = 'error';
-					this._logWithLevel([errorObj, '']);
+					this._logWithLevel([errorObj, arg.message]);
 					rest[i] = `${errorObj.error.name}: ${arg.message}`;
 					numErrors++;
 				}

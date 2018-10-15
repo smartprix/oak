@@ -22,9 +22,8 @@ const omit = [
 	'label',
 	'message',
 	'durationMs',
-	'stack',
 	'createdAt',
-	'errorName',
+	'error',
 	'console',
 ];
 
@@ -69,8 +68,8 @@ function formatMessage(data) {
 	if (!data.message) return '';
 	const color = levelColors[data.level] || levelColors.silly;
 	let message = data.message;
-	if (data.errorName) {
-		message = `${data.errorName}: ${message}`;
+	if (data.error && data.error.name) {
+		message = `${data.error.name}: ${message}`;
 	}
 	let colorFn = chalk.keyword(color);
 	if (data.level === 'error') {
@@ -80,8 +79,12 @@ function formatMessage(data) {
 }
 
 function formatStack(data) {
-	if (!data.stack) return '';
-	const stack = data.stack.split('\n').slice(1).map(line => line.replace(/^\s{4}/, '  ')).join('\n');
+	if (!data.error || !data.error.stack) return '';
+	let stack = data.error.stack.split('\n');
+	if (data.message === data.error.message) {
+		stack = stack.slice(1);
+	}
+	stack = stack.map(line => line.replace(/^\s{4}/, '  ')).join('\n');
 	return '\n' + chalk.keyword('orangered')(stack);
 }
 
@@ -308,7 +311,7 @@ if (commander.grep) {
 
 const directory = `${cfg('logstashDir')}/logs`;
 const currentDate = moment().format('YYYY-MM-DD');
-const file = `${directory}/log-${currentDate}.json`;
+const file = `${directory}/${currentDate}-log.json`;
 const stream = tail(file, {
 	numLines: options.lines,
 	watch: true,

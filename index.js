@@ -25,4 +25,6 @@ process.on('SIGTERM', () => {
 	System.exit('Received SIGTERM');
 });
 
+Oak.info('Application started');
+
 export default Oak;

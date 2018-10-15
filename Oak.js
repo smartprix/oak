@@ -68,11 +68,9 @@ class Oak {
 			rest = args.slice(1);
 		}
 		opts.createdAt = new Date().toISOString();
-		if (rest.length === 0) {
-			message = 'undefined';
-		}
+
 		// When only a string is passed
-		else if (rest.length === 1 && _.isString(rest[0])) {
+		if (rest.length === 1 && _.isString(rest[0])) {
 			message = rest[0];
 		}
 		// Handles special case log('msg', new Error('err'))
@@ -98,10 +96,19 @@ class Oak {
 			message = util.format(...rest);
 		}
 
-		if (opts.message && message) {
-			opts.originalMessage = opts.message;
+		if (opts.message !== undefined) {
+			if (message !== undefined) {
+				opts.originalMessage = opts.message;
+				opts.message = message;
+			}
 		}
-		opts.message = message || opts.message || 'undefined';
+		else if (message !== undefined) {
+			opts.message = message;
+		}
+		else {
+			opts.message = 'undefined';
+		}
+
 		Oak.transport.log(_.defaultsDeep(opts, this.options));
 	}
 

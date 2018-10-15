@@ -178,6 +178,17 @@ class Oak {
 	}
 
 	/**
+	 * @param {function} fn
+	 * @param  {any[]} args
+	 */
+	async logTimeTaken(fn, ...args) {
+		const key = this.time();
+		const result = await fn();
+		this.timeEnd(key, ...args);
+		return result;
+	}
+
+	/**
 	 * Returns a child logger with the same options as the current one plus any extra provided
 	 * @param {string|object} opts
 	 * @returns {Oak}
@@ -245,6 +256,10 @@ class Oak {
 	 */
 	static timeEnd(key, ...args) {
 		return this.default.timeEnd(key, ...args);
+	}
+
+	static async logTimeTaken(fn, ...args) {
+		return this.default.logTimeTaken(fn, ...args);
 	}
 }
 

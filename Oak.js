@@ -5,22 +5,11 @@ import util from 'util';
 import {ConsoleLogs, FileLogs} from './Transports';
 import {globalOptions} from './helpers';
 
-const oakTransports = [
-	new ConsoleLogs(),
-];
-
-// Enable on servers but not in test env
-if (cfg.isProductionLike() || (process.env.SERVER && cfg.isDev())) {
-	oakTransports.push(new FileLogs({dir: 'logs', table: globalOptions.table}));
-}
-
-
-/**
- * @type {Oak}
- */
-let defaultOak;
+const useFileLogs = cfg.isProductionLike() || (process.env.SERVER && cfg.isDev());
 
 class Oak {
+	static transport = useFileLogs ? new FileLogs({dir: 'logs', table: globalOptions.table}) : new ConsoleLogs();
+
 	/**
 	 * Get a logger instance with some options pre set
 	 * @param {object|string} opts Default label if string
@@ -38,24 +27,47 @@ class Oak {
 		this.timers = new Map();
 	}
 
-
-
-
-
-
 	/**
 	 * @param {any[]} args
 	 * @param {string|object} level or options object
 	 */
-	_logWithLevel(args, level) {
+	_logWithLevel(args, level = {}) {
 		if (typeof level === 'string') level = {level};
-		if (typeof args[0] === 'object' && !(args[0] instanceof Error)) {
-			args[0] = _.defaults(args[0], level);
+		let opts = level;
+		let rest = args;
+		let message;
+		if (_.isPlainObject(args[0])) {
+			opts = _.defaults(args[0], opts);
+			rest = args.slice(1);
 		}
-		else {
-			args.unshift(level);
+
+		let numErrors = 0;
+		for (let i = 0; i < rest.length; i++) {
+			const arg = rest[i];
+			if (arg instanceof Error) {
+				// Log any errors individually
+				this._logWithLevel(_.defaults(Oak._parseError(arg), opts));
+				rest[i] = arg.message;
+				numErrors++;
 		}
-		this.log(...args);
+		}
+		// If only error object, then don't log twice
+		if (numErrors === rest.length && numErrors > 0) return;
+		if (rest.length === 1 && _.isString(rest[0])) {
+			message = rest[0];
+		}
+		else if (rest.length >= 1) {
+			message = util.format(...rest);
+		}
+
+		opts.createdAt = new Date().toISOString();
+		if (opts.message && message) {
+			opts.originalMessage = opts.message;
+		}
+		opts.message = message || opts.message || 'undefined';
+
+		const infoObject = _.defaultsDeep(opts, this.instanceOpts);
+		Oak.transport.log(infoObject);
 	}
 
 	/**
@@ -90,36 +102,7 @@ class Oak {
 	 * first arg may be an options object
 	 */
 	log(...args) {
-		let opts = {};
-		let rest = args;
-		if (typeof args[0] === 'object' && !(args[0] instanceof Error)) {
-			opts = args[0];
-			rest = args.slice(1);
-		}
-		let numErrors = 0;
-		for (let i = 0; i < rest.length; i++) {
-			const arg = rest[i];
-			if (arg instanceof Error) {
-				// Log any errors individually
-				this.error(_.defaults(Oak._parseError(arg), opts));
-				rest[i] = arg.message;
-				numErrors++;
-			}
-		}
-		// If only error object, then don't log twice
-		if (numErrors === rest.length && numErrors > 0) return;
-		const message = util.format(...rest);
-
-		opts.createdAt = new Date().toISOString();
-		if (opts.message && message) {
-			opts.originalMessage = opts.message;
-		}
-		opts.message = message || opts.message;
-
-		const infoObject = _.defaultsDeep(opts, this.instanceOpts);
-		oakTransports.forEach((t) => {
-			t.log(infoObject);
-		});
+		this._logWithLevel(args);
 	}
 
 	silly(...args) {
@@ -186,7 +169,6 @@ class Oak {
 		let childOpts;
 		if (typeof opts === 'object') {
 			childOpts = opts;
-			childOpts.label = opts.label || 'None';
 		}
 		else {
 			childOpts = {label: String(opts)};

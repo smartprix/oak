@@ -1,3 +1,4 @@
+import {cfg} from 'sm-utils';
 import rotatingFileStream from 'rotating-file-stream';
 import BasicLogs from './BasicLogs';
 

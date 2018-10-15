@@ -21,7 +21,7 @@ const omit = [
 	'branch',
 	'label',
 	'message',
-	'durationMs',
+	'duration',
 	'createdAt',
 	'error',
 	'console',
@@ -89,8 +89,8 @@ function formatStack(data) {
 }
 
 function formatDuration(data) {
-	if (data.durationMs == null) return '';
-	return chalk.bold(`: ${data.durationMs}ms`);
+	if (data.duration == null) return '';
+	return chalk.bold(`: ${data.duration}ms`);
 }
 
 function formatValue(val, indent) {

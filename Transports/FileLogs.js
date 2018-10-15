@@ -16,7 +16,7 @@ class FileLogs extends BasicLogs {
 		super({level});
 		this.dir = dir;
 		this.table = table;
-		this.stream = FileLogs._getStream(this);
+		FileLogs._getStream(this);
 	}
 
 	/**
@@ -32,10 +32,11 @@ class FileLogs extends BasicLogs {
 	 * @returns {void}
 	 */
 	log(info) {
-		if (!this.stream) return;
+		const stream = FileLogs._getStream(this);
+		if (!stream) return;
 		if (FileLogs.filterLogs(info, this.level)) return;
 		try {
-			this.stream.write(FileLogs.formatter(info));
+			stream.write(FileLogs.formatter(info));
 		}
 		catch (err) {
 			// eslint-disable-next-line no-console
@@ -65,7 +66,8 @@ class FileLogs extends BasicLogs {
 		}
 		catch (err) {
 			// eslint-disable-next-line no-console
-			console.error(`${new Date().toLocaleString()} [FileStream] Could not start file stream`, err);
+			console.error(`${new Date().toLocaleString()} [FileStream] error: Could not start file stream`, err);
+			return null;
 		}
 
 		// eslint-disable-next-line no-console
@@ -73,7 +75,7 @@ class FileLogs extends BasicLogs {
 
 		newStream.on('error', (err) => {
 			// eslint-disable-next-line no-console
-			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream: ${key},`, err);
+			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream ${key},`, err);
 			// reopen stream
 			setImmediate(() => this._getStream({table, regenerate: true, dir}));
 		});

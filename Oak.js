@@ -40,13 +40,12 @@ class Oak {
 			opts = _.defaults(args[0], opts);
 			rest = args.slice(1);
 		}
-
 		let numErrors = 0;
 		for (let i = 0; i < rest.length; i++) {
 			const arg = rest[i];
 			if (arg instanceof Error) {
 				// Log any errors individually
-				this._logWithLevel(_.defaults(Oak._parseError(arg), opts));
+				this._logWithLevel([_.defaults(Oak._parseError(arg), opts)]);
 				rest[i] = arg.message;
 				numErrors++;
 			}
@@ -72,21 +71,27 @@ class Oak {
 
 	/**
 	 * @param {Error} err
+	 * @returns {object}
 	 */
 	static _parseError(err) {
-		const errorOpts = {
-			level: 'error',
-			stack: err.stack,
-			errorName: err.name || err.constructor.name || '',
-			message: err.message,
+		const opts = {
+			error: {
+				stack: err.stack,
+				name: err.name || err.constructor.name || '',
+				message: err.message,
+			},
 		};
 		if (err.code) {
-			errorOpts.errorCode = err.code;
+			_.set(opts, 'error.code', err.code);
+		}
+		// Model from 'xorm' UserError
+		if (err.model) {
+			opts.model = err.model;
 		}
 		if (err.statusCode) {
-			_.set(errorOpts, 'ctx.statusCode', err.statusCode);
+			_.set(opts, 'ctx.statusCode', err.statusCode);
 		}
-		return errorOpts;
+		return opts;
 	}
 
 	/**

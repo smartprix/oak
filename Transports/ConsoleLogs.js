@@ -42,7 +42,7 @@ const terminalColors = {
 };
 
 
-const omitFromRest = [...Object.keys(globalOptions), 'label', 'message', 'level', 'stack', 'duration', 'createdAt'];
+const omitFromRest = [...Object.keys(globalOptions), 'label', 'message', 'level', 'error', 'duration', 'createdAt'];
 
 /**
  * This is used because the default winston console transport outputs using stdin/stdout
@@ -69,14 +69,13 @@ class ConsoleLogs extends BasicLogs {
 		const colorIt = this.getColorItFn(info.level);
 		const rest = _.omit(info, omitFromRest);
 		const restStringified = `\n${util.format(rest)}`;
-
 		const colored = {
 			time: colorIt(new Date(info.createdAt).toLocaleString()),
 			level: colorIt(info.level, {bright: true}),
 			label: colorIt(`[${info.label}] `, {bright: true, filter: !info.label}),
-			stack: colorIt(info.stack),
+			stack: colorIt(_.get(info, 'error.stack', '')),
 			get message() {
-				if (info.stack) {
+				if (this.stack) {
 					return colorIt(`${info.message}\n`, {filter: info.label !== 'graphql'});
 				}
 				return colorIt(info.message);

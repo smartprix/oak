@@ -15,15 +15,15 @@ class Oak {
 	 * @param {object|string} opts Default label if string
 	 */
 	constructor(opts = {}) {
-		this.instanceOpts = {};
+		this.options = {};
 		if (typeof opts === 'object') {
-			this.instanceOpts = opts;
-			this.instanceOpts.label = opts.label || 'None';
+			this.options = opts;
+			this.options.label = opts.label || 'None';
 		}
 		else {
-			this.instanceOpts = {label: String(opts)};
+			this.options = {label: String(opts)};
 		}
-		this.instanceOpts = _.defaults(this.instanceOpts, globalOptions);
+		this.options = _.defaults(this.options, globalOptions);
 		this.timers = new Map();
 	}
 	/**
@@ -69,7 +69,7 @@ class Oak {
 		}
 		opts.createdAt = new Date().toISOString();
 		if (rest.length === 0) {
-			Oak.transport.log(_.defaultsDeep(opts, this.instanceOpts));
+			Oak.transport.log(_.defaultsDeep(opts, this.options));
 			return;
 		}
 		// When only a string is passed
@@ -103,7 +103,7 @@ class Oak {
 			opts.originalMessage = opts.message;
 		}
 		opts.message = message || opts.message || 'undefined';
-		Oak.transport.log(_.defaultsDeep(opts, this.instanceOpts));
+		Oak.transport.log(_.defaultsDeep(opts, this.options));
 	}
 
 	/**
@@ -201,7 +201,7 @@ class Oak {
 		else {
 			childOpts = {label: String(opts)};
 		}
-		return new Oak(_.defaultsDeep(childOpts, this.instanceOpts));
+		return new Oak(_.defaultsDeep(childOpts, this.options));
 	}
 
 	/**

@@ -26,6 +26,30 @@ class Oak {
 		this.instanceOpts = _.defaults(this.instanceOpts, globalOptions);
 		this.timers = new Map();
 	}
+	/**
+	 * @param {Error} err
+	 * @returns {object}
+	 */
+	static _parseError(err, opts = {}) {
+		const obj = {
+			error: {
+				stack: err.stack,
+				name: err.name || err.constructor.name || '',
+				message: err.message,
+			},
+		};
+		if (err.code) {
+			_.set(obj, 'error.code', err.code);
+		}
+		// Model from 'xorm' UserError
+		if (err.model) {
+			obj.model = err.model;
+		}
+		if (err.statusCode) {
+			_.set(obj, 'ctx.statusCode', err.statusCode);
+		}
+		return _.defaults(obj, opts);
+	}
 
 	/**
 	 * @param {any[]} args
@@ -36,62 +60,48 @@ class Oak {
 		let opts = level;
 		let rest = args;
 		let message;
+		let numErrors = 0;
 		if (_.isPlainObject(args[0])) {
 			opts = _.defaults(args[0], opts);
 			rest = args.slice(1);
 		}
-		let numErrors = 0;
-		for (let i = 0; i < rest.length; i++) {
-			const arg = rest[i];
-			if (arg instanceof Error) {
-				// Log any errors individually
-				this._logWithLevel([_.defaults(Oak._parseError(arg), opts)]);
-				rest[i] = arg.message;
-				numErrors++;
-			}
+		opts.createdAt = new Date().toISOString();
+		if (rest.length === 0) {
+			Oak.transport.log(_.defaultsDeep(opts, this.instanceOpts));
+			return;
 		}
-		// If only error object, then don't log twice
-		if (numErrors === rest.length && numErrors > 0) return;
+		// When only a string is passed
 		if (rest.length === 1 && _.isString(rest[0])) {
 			message = rest[0];
 		}
+		// Handles special case log('msg', new Error('err'))
+		else if (rest.length === 2 && _.isString(rest[0]) && _.isError(rest[1])) {
+			opts = Oak._parseError(rest[1], opts);
+			if (!opts.level) opts.level = 'error';
+			message = rest[0];
+		}
 		else if (rest.length >= 1) {
+			for (let i = 0; i < rest.length; i++) {
+				const arg = rest[i];
+				if (arg instanceof Error) {
+					// Log any errors individually
+					const errorObj = Oak._parseError(arg, opts);
+					if (!errorObj.level) errorObj.level = 'error';
+					this._logWithLevel([errorObj]);
+					rest[i] = `${errorObj.error.name}: ${arg.message}`;
+					numErrors++;
+				}
+			}
+			// If only error object, then don't log twice
+			if (numErrors === rest.length && numErrors > 0) return;
 			message = util.format(...rest);
 		}
 
-		opts.createdAt = new Date().toISOString();
 		if (opts.message && message) {
 			opts.originalMessage = opts.message;
 		}
 		opts.message = message || opts.message || 'undefined';
-
-		const infoObject = _.defaultsDeep(opts, this.instanceOpts);
-		Oak.transport.log(infoObject);
-	}
-
-	/**
-	 * @param {Error} err
-	 * @returns {object}
-	 */
-	static _parseError(err) {
-		const opts = {
-			error: {
-				stack: err.stack,
-				name: err.name || err.constructor.name || '',
-				message: err.message,
-			},
-		};
-		if (err.code) {
-			_.set(opts, 'error.code', err.code);
-		}
-		// Model from 'xorm' UserError
-		if (err.model) {
-			opts.model = err.model;
-		}
-		if (err.statusCode) {
-			_.set(opts, 'ctx.statusCode', err.statusCode);
-		}
-		return opts;
+		Oak.transport.log(_.defaultsDeep(opts, this.instanceOpts));
 	}
 
 	/**

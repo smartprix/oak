@@ -69,17 +69,14 @@ class ConsoleLogs extends BasicLogs {
 		const colorIt = this.getColorItFn(info.level);
 		const rest = _.omit(info, omitFromRest);
 		const restStringified = `\n${util.format(rest)}`;
+		const stack = _.get(info, 'error.stack', '');
+
 		const colored = {
 			time: colorIt(new Date(info.createdAt).toLocaleString()),
 			level: colorIt(info.level, {bright: true}),
 			label: colorIt(`[${info.label}] `, {bright: true, filter: !info.label}),
-			stack: colorIt(_.get(info, 'error.stack', '')),
-			get message() {
-				if (this.stack) {
-					return colorIt(`${info.message}\n`, {filter: info.label !== 'graphql'});
-				}
-				return colorIt(info.message);
-			},
+			stack: colorIt(stack),
+			message: colorIt(`${info.message}${info.message && stack ? '\n' : ''}`, {filter: !info.message}),
 			duration: colorIt(`${info.duration}ms `, {bright: true, filter: _.isNil(info.duration)}),
 			rest: colorIt(restStringified, {bright: true, filter: _.isEmpty(rest)}),
 		};

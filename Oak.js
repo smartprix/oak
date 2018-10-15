@@ -69,11 +69,10 @@ class Oak {
 		}
 		opts.createdAt = new Date().toISOString();
 		if (rest.length === 0) {
-			Oak.transport.log(_.defaultsDeep(opts, this.options));
-			return;
+			message = 'undefined';
 		}
 		// When only a string is passed
-		if (rest.length === 1 && _.isString(rest[0])) {
+		else if (rest.length === 1 && _.isString(rest[0])) {
 			message = rest[0];
 		}
 		// Handles special case log('msg', new Error('err'))
@@ -89,7 +88,7 @@ class Oak {
 					// Log any errors individually
 					const errorObj = Oak._parseError(arg, opts);
 					if (!errorObj.level) errorObj.level = 'error';
-					this._logWithLevel([errorObj]);
+					this._logWithLevel([errorObj, '']);
 					rest[i] = `${errorObj.error.name}: ${arg.message}`;
 					numErrors++;
 				}

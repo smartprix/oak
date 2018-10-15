@@ -35,50 +35,13 @@ class Oak {
 			this.instanceOpts = {label: String(opts)};
 		}
 		this.instanceOpts = _.defaults(this.instanceOpts, globalOptions);
-		this.timers = {};
+		this.timers = new Map();
 	}
 
-	/**
-	 * Round off number to precision level
-	 * @param {number} number
-	 * @param {number} precision
-	 * @returns {number}
-	 */
-	static round(number, precision = 1) {
-		/**
-		* Round off number to precision level
-	 	* @param {number} num
-	 	* @param {number} prec
-	 	* @returns {number}
-	 	*/
-		const shift = function (num, prec) {
-			const numArray = ('' + num).split('e');
-			return +(numArray[0] + 'e' + (numArray[1] ? (+numArray[1] + prec) : prec));
-		};
-		return shift(Math.round(shift(number, precision)), -precision);
-	}
 
-	static now() {
-		const hrTime = process.hrtime();
-		return (hrTime[0] * 1000) + (hrTime[1] / 1000000);
-	}
 
-	/**
-	 * Elapsed time since a timestamp
-	 * @param {number} since Epoch time from Monitor.now()
-	 * @param {number} precision decimal digit precision
-	 */
-	static elapsed(since, precision = 1) {
-		return this.round(this.now() - since, precision);
-	}
 
-	/**
-	 * Update the default options object for the logger
-	 * @param {object} opts
-	 */
-	updateOptions(opts = {}) {
-		this.opts = _.merge(this.opts, opts);
-	}
+
 
 	/**
 	 * @param {any[]} args
@@ -112,6 +75,14 @@ class Oak {
 			_.set(errorOpts, 'ctx.statusCode', err.statusCode);
 		}
 		return errorOpts;
+	}
+
+	/**
+	 * Update the default options object for the logger
+	 * @param {object} opts
+	 */
+	updateOptions(opts = {}) {
+		this.opts = _.merge(this.opts, opts);
 	}
 
 	/**
@@ -180,8 +151,12 @@ class Oak {
 	 * @returns {string} the key
 	 */
 	time(key) {
-		if (!key) key = Math.random().toString(36).substring(2);
-		this.timers[key] = Oak.now();
+		if (!key) key = Math.random();
+		if (this.timers.size > 1000) {
+			Oak.warn('Possible memory leak in oak timers');
+			return key;
+		}
+		this.timers.set(key, process.hrtime());
 		return key;
 	}
 
@@ -190,12 +165,13 @@ class Oak {
 	 * @param {any[]} args
 	 */
 	timeEnd(key, ...args) {
-		const since = this.timers[key];
+		const since = this.timers.get(key);
 		if (since) {
-			const duration = Oak.elapsed(since);
-			args.unshift(key);
-			this._logWithLevel(args, {level: 'info', duration});
-			delete this.timers[key];
+			const hrTime = process.hrtime(since);
+			const duration = _.round((hrTime[0] * 1000) + (hrTime[1] / 1000000), 2);
+
+			this._logWithLevel(args, {level: 'info', duration, message: key});
+			this.timers.delete(key);
 			return duration;
 		}
 		return -1;

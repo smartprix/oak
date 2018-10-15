@@ -48,17 +48,20 @@ const omitFromRest = [...Object.keys(globalOptions), 'label', 'message', 'level'
  * This is used because the default winston console transport outputs using stdin/stdout
  */
 class ConsoleLogs extends BasicLogs {
+	static _colorFns = {};
 	/**
 	 * @param {string} level
 	 */
 	static getColorItFn(level) {
 		const levelColor = levelColors[level] || 'white';
-		const terminalColor = terminalColors[levelColor];
+		if (this._colorFns[levelColor]) return this._colorFns[levelColor];
 
-		return (txt, {bright = false, filter = false} = {}) => {
+		this._colorFns[levelColor] = (txt, {white = false, bright = false, filter = false} = {}) => {
+			const terminalColor = white ? terminalColors.white : terminalColors[levelColor];
 			if (!txt || filter) return '';
 			return `${terminalColor}${bright ? terminalColors.bright : ''}${txt}${terminalColors.reset}`;
 		};
+		return this._colorFns[levelColor];
 	}
 
 	/**
@@ -78,7 +81,7 @@ class ConsoleLogs extends BasicLogs {
 			stack: colorIt(stack),
 			message: colorIt(`${info.message}${info.message && stack ? '\n' : ''}`, {filter: !info.message}),
 			duration: colorIt(`${info.duration}ms `, {bright: true, filter: _.isNil(info.duration)}),
-			rest: colorIt(restStringified, {bright: true, filter: _.isEmpty(rest)}),
+			rest: colorIt(restStringified, {white: true, bright: true, filter: _.isEmpty(rest)}),
 		};
 
 		return `${colored.time} ${colored.label}${colored.level}: ${colored.duration}${colored.message}${colored.stack}${colored.rest}`;

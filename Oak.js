@@ -49,7 +49,7 @@ class Oak {
 				this._logWithLevel(_.defaults(Oak._parseError(arg), opts));
 				rest[i] = arg.message;
 				numErrors++;
-		}
+			}
 		}
 		// If only error object, then don't log twice
 		if (numErrors === rest.length && numErrors > 0) return;
@@ -180,37 +180,37 @@ class Oak {
 	 * Returns a global default logger instance
 	 * @returns {Oak}
 	 */
-	static init() {
-		if (!defaultOak) defaultOak = new Oak('Default');
-		return defaultOak;
+	static get default() {
+		if (!this._defaultOak) this._defaultOak = new Oak('Default');
+		return this._defaultOak;
 	}
 
 	static log(...args) {
-		this.init().log(...args);
+		this.default.log(...args);
 	}
 
 	static silly(...args) {
-		this.init().silly(...args);
+		this.default.silly(...args);
 	}
 
 	static debug(...args) {
-		this.init().debug(...args);
+		this.default.debug(...args);
 	}
 
 	static verbose(...args) {
-		this.init().verbose(...args);
+		this.default.verbose(...args);
 	}
 
 	static info(...args) {
-		this.init().info(...args);
+		this.default.info(...args);
 	}
 
 	static warn(...args) {
-		this.init().warn(...args);
+		this.default.warn(...args);
 	}
 
 	static error(...args) {
-		this.init().error(...args);
+		this.default.error(...args);
 	}
 
 	/**
@@ -219,18 +219,16 @@ class Oak {
 	 * @returns {string}
 	 */
 	static time(key) {
-		return this.init().time(key);
+		return this.default.time(key);
 	}
 
 	/**
 	 * @param {string} key
 	 * @param {any[]} args
 	 */
-	static timeEnd(...args) {
-		return this.init().timeEnd(...args);
+	static timeEnd(key, ...args) {
+		return this.default.timeEnd(key, ...args);
 	}
 }
-
-Oak.init();
 
 export default Oak;

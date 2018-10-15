@@ -107,10 +107,10 @@ class Oak {
 
 	/**
 	 * Update the default options object for the logger
-	 * @param {object} opts
+	 * @param {object} options
 	 */
-	updateOptions(opts = {}) {
-		this.opts = _.merge(this.opts, opts);
+	updateOptions(options = {}) {
+		this.options = _.merge(this.options, options);
 	}
 
 	/**

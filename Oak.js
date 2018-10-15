@@ -176,12 +176,9 @@ class Oak {
 		return -1;
 	}
 
-	/**
-	 * @param {function} fn
-	 * @param  {any[]} args
-	 */
-	async logTimeTaken(fn, ...args) {
+	async logTimeTaken(...args) {
 		const key = this.time();
+		const fn = args.pop();
 		const result = await fn();
 		this.timeEnd(key, ...args);
 		return result;
@@ -257,8 +254,8 @@ class Oak {
 		return this.default.timeEnd(key, ...args);
 	}
 
-	static async logTimeTaken(fn, ...args) {
-		return this.default.logTimeTaken(fn, ...args);
+	static async logTimeTaken(...args) {
+		return this.default.logTimeTaken(...args);
 	}
 }
 

@@ -27,6 +27,7 @@ class Oak {
 		this.timers = new Map();
 	}
 	/**
+	 * @ignore
 	 * @param {Error} err
 	 * @returns {object}
 	 */
@@ -52,6 +53,7 @@ class Oak {
 	}
 
 	/**
+	 * @ignore
 	 * @param {any[]} args
 	 * @param {string|object} level or options object
 	 */
@@ -149,7 +151,7 @@ class Oak {
 	 * @returns {string} the key
 	 */
 	time(key) {
-		if (!key) key = Math.random();
+		if (!key) key = Math.random().toString();
 		if (this.timers.size > 1000) {
 			Oak.warn('Possible memory leak in oak timers');
 			return key;

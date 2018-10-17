@@ -15,14 +15,14 @@ process.on('exit', (code) => {
 	System.exit(code);
 });
 
-process.on('SIGINT', () => {
+process.once('SIGINT', () => {
 	Oak.info('Received SIGINT.');
-	System.exit('Received SIGINT');
+	System.exit();
 });
 
-process.on('SIGTERM', () => {
+process.once('SIGTERM', () => {
 	Oak.info('Received SIGTERM.');
-	System.exit('Received SIGTERM');
+	System.exit();
 });
 
 Oak.info('Application started');

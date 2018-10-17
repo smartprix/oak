@@ -17,12 +17,15 @@ class FileLogs extends BasicLogs {
 	 * @param {object} opts
 	 * @param {string} opts.table
 	 * @param {string} opts.dir
+	 * @param {string} opts.level
+	 * @param {boolean} opts.filter
 	 * @param {}
 	 */
-	constructor({table, level = 'silly', dir = '/default'} = {}) {
+	constructor({table, level = 'silly', dir = '/default', filter = false} = {}) {
 		super({level});
 		this.dir = dir;
 		this.table = table;
+		this.filter = filter;
 		FileLogs._getStream(this);
 	}
 
@@ -41,7 +44,7 @@ class FileLogs extends BasicLogs {
 	log(info) {
 		const stream = FileLogs._getStream(this);
 		if (!stream) return;
-		if (FileLogs.filterLogs(info, this.level)) return;
+		if (this.filter && FileLogs.filterLogs(info, this.level)) return;
 		try {
 			stream.write(FileLogs.formatter(info));
 		}

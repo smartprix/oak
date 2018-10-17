@@ -8,7 +8,7 @@ import {globalOptions} from './helpers';
 const useFileLogs = cfg.isProductionLike() || (process.env.SERVER && cfg.isDev());
 
 class Oak {
-	static transport = useFileLogs ? new FileLogs({dir: 'logs', table: globalOptions.table}) : new ConsoleLogs();
+	static transport = useFileLogs ? new FileLogs({dir: 'logs', table: globalOptions.table, filter: true}) : new ConsoleLogs();
 
 	/**
 	 * Get a logger instance with some options pre set

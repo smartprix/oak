@@ -154,10 +154,10 @@ class Oak {
 
 	/**
 	 * @param {string} [key] provide a key else a randomly generated one will be assigned
-	 * @returns {string} the key
+	 * @returns {string | number} the key
 	 */
 	time(key) {
-		if (!key) key = Math.random().toString();
+		if (!key) key = Math.random();
 		if (this.timers.size > 1000) {
 			Oak.warn('Possible memory leak in oak timers');
 			return key;
@@ -167,7 +167,8 @@ class Oak {
 	}
 
 	/**
-	 * @param {string} key
+	 * if key is string then only it is logged
+	 * @param {string | number} key
 	 * @param {any[]} args
 	 */
 	timeEnd(key, ...args) {
@@ -175,8 +176,9 @@ class Oak {
 		if (since) {
 			const hrTime = process.hrtime(since);
 			const duration = _.round((hrTime[0] * 1000) + (hrTime[1] / 1000000), 2);
-
-			this._logWithLevel(args, {level: 'info', duration, message: key});
+			let message;
+			if (_.isString(key)) message = key;
+			this._logWithLevel(args, {level: 'info', duration, message});
 			this.timers.delete(key);
 			return duration;
 		}

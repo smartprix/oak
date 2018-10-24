@@ -3,7 +3,7 @@ import _ from 'lodash';
 import util from 'util';
 
 import {ConsoleLogs} from './Transports';
-import {globalOptions, setGlobalOptions} from './helpers';
+import {getGlobalOptions, setGlobalOptions} from './helpers';
 
 class Oak {
 	static transports = [new ConsoleLogs()];
@@ -21,7 +21,7 @@ class Oak {
 		else {
 			this.options = {label: String(opts)};
 		}
-		this.options = _.defaults(this.options, globalOptions);
+		this.options = _.defaults(this.options, getGlobalOptions());
 		this.timers = new Map();
 	}
 	/**

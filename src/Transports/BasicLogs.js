@@ -18,13 +18,20 @@ export default class BasicLogs {
 		this.level = level;
 	}
 
+	static errorLevels = ['error', 'warn'];
+
+	static formatter(info) {
+		return info;
+	}
+
 	/**
 	 * @param {object} info
 	 * @returns {void}
 	 */
 	log(info) {
 		if (BasicLogs.filterLogs(info, this.level)) return;
-		console.log(info);
+		const consoleLevel = BasicLogs.errorLevels.includes(info.level) ? 'error' : 'log';
+		console[consoleLevel](BasicLogs.formatter(info));
 	}
 
 	/**

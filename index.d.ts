@@ -1,16 +1,25 @@
-import { level } from "oak";
+import {WriteStream} from 'fs';
 
-declare module 'oak' {
+declare module '@smpx/oak' {
 	interface plainObject {
 		[key: string]: any;
 	}
 
 	type level = 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly';
 	
-	class BasicLogger {
+	class BasicLogs {
 		constructor(opts: {level: level});
 		log(info: plainObject): void;
+		formatter(info): any;
 		filterLogs(info: plainObject, level: level): boolean;
+	}
+
+	class ConsoleLogs extends BasicLogs {
+	}
+
+	class FileLogs extends BasicLogs {
+		constructor(opts: {level: level, path: string, table: string, filter: boolean})
+		_getStream(opts: {path: string, table: string, regenerate?: boolean}): WriteStream;
 	}
 
 	class Oak {
@@ -69,7 +78,7 @@ declare module 'oak' {
 		static installExceptionHandlers(): void;
 		static setGlobalOptions(options: plainObject): void;
 
-		static setTransports<T extends BasicLogger>(transports: T | T[]): void;
+		static setTransports<T extends BasicLogs>(transports: T | T[]): void;
 	
 		static default: Oak;
 	}

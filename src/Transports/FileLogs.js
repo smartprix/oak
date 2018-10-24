@@ -41,11 +41,11 @@ class FileLogs extends BasicLogs {
 	 * @returns {void}
 	 */
 	log(info) {
-		const stream = FileLogs._getStream(this);
+		const stream = this.constructor._getStream(this);
 		if (!stream) return;
-		if (this.filter && FileLogs.filterLogs(info, this.level)) return;
+		if (this.filter && this.constructor.filterLogs(info, this.level)) return;
 		try {
-			stream.write(FileLogs.formatter(info));
+			stream.write(this.constructor.formatter(info));
 		}
 		catch (err) {
 			console.error(`${new Date().toLocaleString()} [FileStream] Could not write to stream`, err);

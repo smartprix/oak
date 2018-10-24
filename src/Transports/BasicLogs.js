@@ -29,9 +29,9 @@ export default class BasicLogs {
 	 * @returns {void}
 	 */
 	log(info) {
-		if (BasicLogs.filterLogs(info, this.level)) return;
-		const consoleLevel = BasicLogs.errorLevels.includes(info.level) ? 'error' : 'log';
-		console[consoleLevel](BasicLogs.formatter(info));
+		if (this.constructor.filterLogs(info, this.level)) return;
+		const consoleLevel = this.constructor.errorLevels.includes(info.level) ? 'error' : 'log';
+		console[consoleLevel](this.constructor.formatter(info));
 	}
 
 	/**

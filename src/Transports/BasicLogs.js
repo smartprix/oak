@@ -18,6 +18,14 @@ export default class BasicLogs {
 		this.level = level;
 	}
 
+	/**
+	 * @param {object} info
+	 * @returns {void}
+	 */
+	log(info) {
+		if (BasicLogs.filterLogs(info, this.level)) return;
+		console.log(info);
+	}
 
 	/**
 	 * Filter logs items by level

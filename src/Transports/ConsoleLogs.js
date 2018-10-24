@@ -94,7 +94,6 @@ class ConsoleLogs extends BasicLogs {
 	log(info) {
 		if (ConsoleLogs.filterLogs(info, this.level)) return;
 		const consoleLevel = ['error', 'warn'].includes(info.level) ? 'error' : 'log';
-		// eslint-disable-next-line no-console
 		console[consoleLevel](ConsoleLogs.formatter(info));
 	}
 }

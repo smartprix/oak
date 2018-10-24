@@ -1,13 +1,12 @@
-import {cfg} from 'sm-utils';
-import moment from 'moment';
 import rotatingFileStream from 'rotating-file-stream';
 import BasicLogs from './BasicLogs';
 
 // Oak is not used in this file, because oak itself uses this
 
 function fileNameGenerator() {
-	const currentDate = moment().format('YYYY-MM-DD');
-	return `${currentDate}-${this}.json`;
+	const currentDate = new Date();
+	const formattedDate = `${currentDate.getFullYear()}-${_.padStart(currentDate.getMonth() + 1, 2, '0')}-${_.padStart(currentDate.getDate(), 2, '0')}`;
+	return `${formattedDate}-${this}.json`;
 }
 
 class FileLogs extends BasicLogs {
@@ -16,14 +15,14 @@ class FileLogs extends BasicLogs {
 	/**
 	 * @param {object} opts
 	 * @param {string} opts.table
-	 * @param {string} opts.dir
+	 * @param {string} opts.path
 	 * @param {string} opts.level
 	 * @param {boolean} opts.filter
 	 * @param {}
 	 */
-	constructor({table, level = 'silly', dir = '/default', filter = false} = {}) {
+	constructor({table, level = 'silly', path = `${process.cwd()}/logs`, filter = false} = {}) {
 		super({level});
-		this.dir = dir;
+		this.path = path;
 		this.table = table;
 		this.filter = filter;
 		FileLogs._getStream(this);
@@ -49,20 +48,19 @@ class FileLogs extends BasicLogs {
 			stream.write(FileLogs.formatter(info));
 		}
 		catch (err) {
-			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] Could not write to stream`, err);
 		}
 	}
 
 	/**
 	 * @param {object} param0
-	 * @param {string} param0.dir
+	 * @param {string} param0.path
 	 * @param {string} param0.table
 	 * @param {boolean} param0.regenerate
 	 * @returns {import('fs').WriteStream}
 	 */
-	static _getStream({dir, table, regenerate = false}) {
-		const key = `${dir}-${table}`;
+	static _getStream({path, table, regenerate = false}) {
+		const key = `${path}-${table}`;
 		if (!regenerate && (key in this.logStreams)) return this.logStreams[key];
 		let newStream;
 
@@ -70,24 +68,21 @@ class FileLogs extends BasicLogs {
 			newStream = rotatingFileStream(fileNameGenerator.bind(table), {
 				interval: '1d',
 				maxFiles: 10,
-				path: `${cfg('logstashDir')}/${dir}`,
+				path,
 				immutable: true,
 			});
 		}
 		catch (err) {
-			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] error: Could not start file stream`, err);
 			return null;
 		}
 
-		// eslint-disable-next-line no-console
-		console.log(`${new Date().toLocaleString()} [FileStream] silly: New File Write Stream: ${dir}/${table}.json`);
+		console.log(`${new Date().toLocaleString()} [FileStream] silly: New File Write Stream: ${path}/${table}.json`);
 
 		newStream.on('error', (err) => {
-			// eslint-disable-next-line no-console
 			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream ${key},`, err);
 			// reopen stream
-			setImmediate(() => this._getStream({table, regenerate: true, dir}));
+			setImmediate(() => this._getStream({table, regenerate: true, path}));
 		});
 		this.logStreams[key] = newStream;
 		return newStream;

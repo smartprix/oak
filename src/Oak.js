@@ -1,14 +1,12 @@
-import {cfg} from 'sm-utils';
+import {System} from 'sm-utils';
 import _ from 'lodash';
 import util from 'util';
 
-import {ConsoleLogs, FileLogs} from './Transports';
-import {globalOptions} from './helpers';
-
-const useFileLogs = cfg.isProductionLike() || (process.env.SERVER && cfg.isDev());
+import {ConsoleLogs} from './Transports';
+import {globalOptions, setGlobalOptions} from './helpers';
 
 class Oak {
-	static transport = useFileLogs ? new FileLogs({dir: 'logs', table: globalOptions.table, filter: true}) : new ConsoleLogs();
+	static transports = [new ConsoleLogs()];
 
 	/**
 	 * Get a logger instance with some options pre set
@@ -109,7 +107,11 @@ class Oak {
 			opts.message = 'undefined';
 		}
 
-		Oak.transport.log(_.defaultsDeep(opts, this.options));
+		Oak.transports.forEach((transport) => {
+			if (transport.log) {
+				transport.log(_.defaultsDeep(opts, this.options));
+			}
+		});
 	}
 
 	/**
@@ -265,6 +267,40 @@ class Oak {
 
 	static async logTimeTaken(...args) {
 		return this.default.logTimeTaken(...args);
+	}
+
+	static installExitHandlers() {
+		process.on('exit', (code) => {
+			Oak.info({code}, 'Process exited with code', code);
+			System.exit(code);
+		});
+
+		process.once('SIGINT', () => {
+			Oak.info('Received SIGINT.');
+			System.exit();
+		});
+
+		process.once('SIGTERM', () => {
+			Oak.info('Received SIGTERM.');
+			System.exit();
+		});
+	}
+
+	static installExceptionHandlers() {
+		process.on('uncaughtException', (error) => {
+			Oak.error('Uncaught Exception', error);
+			System.exit(1);
+		});
+
+		process.on('unhandledRejection', (error) => {
+			Oak.error('Unhandled Rejection', error);
+		});
+	}
+
+	static setGlobalOptions = setGlobalOptions;
+
+	static setTransports(transports = new ConsoleLogs()) {
+		if (!_.isArray(transports)) transports = [transports];
 	}
 }
 

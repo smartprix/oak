@@ -41,8 +41,6 @@ const terminalColors = {
 	bgWhite: '\x1b[47m',
 };
 
-const omitFromRest = [...Object.keys(getGlobalOptions()), 'label', 'message', 'level', 'error', 'duration', 'createdAt'];
-
 const colorFns = {};
 
 /**
@@ -66,9 +64,11 @@ function getColorItFn(level) {
  */
 function formatter(info) {
 	const colorIt = getColorItFn(info.level);
+	const stack = _.get(info, 'error.stack', '');
+
+	const omitFromRest = [...Object.keys(getGlobalOptions()), 'label', 'message', 'level', 'error', 'duration', 'createdAt'];
 	const rest = _.omit(info, omitFromRest);
 	const restStringified = `\n${util.format(rest)}`;
-	const stack = _.get(info, 'error.stack', '');
 
 	const colored = {
 		time: colorIt(new Date(info.createdAt).toLocaleString()),

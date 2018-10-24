@@ -60,5 +60,8 @@ typings/
 # next.js build output
 .next
 
+# using yarn.lock
+package-lock.json
+
 private
 dist

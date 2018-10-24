@@ -1,0 +1,71 @@
+{
+  "name": "@smpx/oak",
+  "version": "1.0.0",
+  "description": "A simple logger that writes to json file, console, or both",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel-changed",
+    "lint": "eslint src",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run lint && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartprix/oak.git"
+  },
+  "types": "index.d.ts",
+  "keywords": [
+    "oak",
+    "logger",
+    "logs",
+    "jsonlog",
+    "json",
+    "pretty"
+  ],
+  "author": "Rohit Gohri",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smartprix/oak/issues"
+  },
+  "homepage": "https://github.com/smartprix/oak#readme",
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "rotating-file-stream": "^1.3.9",
+    "sm-utils": "^2.15.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@smpx/babel-changed": "^0.2.0",
+    "eslint": "^5.7.0",
+    "eslint-config-smartprix": "^3.4.2"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          },
+          "modules": "commonjs",
+          "shippedProposals": true
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ],
+    "sourceMaps": true
+  },
+  "eslintConfig": {
+    "extends": "smartprix"
+  }
+}

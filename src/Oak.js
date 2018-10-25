@@ -191,6 +191,7 @@ class Oak {
 		const key = this.time();
 		const fn = args.pop();
 		const result = await fn();
+		if (args.length === 0 && fn.name) args.push(fn.name);
 		this.timeEnd(key, ...args);
 		return result;
 	}

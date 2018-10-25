@@ -3,7 +3,7 @@ A simple logger that writes to json file, console, or any other custom transport
 
 ### Install
 
-  yarn add @smpx/oak
+	yarn add @smpx/oak
   
 ### Use
 
@@ -19,15 +19,13 @@ Oak.log('This is a simple message');
 Oak.info({label: 'Apply a label'}, 'You can', 'Chain', 'Like in console', 0, 'Other types than string too');
 ```
 
+##### Preview:
+![Simple logs](./docs/simple.png)
+
 
 #### Timers
 
 ```js
-// Function to time
-async function fnToTime() {
-	return new Promise(resolve => setTimeout(resolve, 3000));
-}
-
 Oak.time('Unique message');
 
 Oak.timeEnd('Unique message', 'Extra info', 'just like in Oak.log');
@@ -37,6 +35,16 @@ Oak.timeEnd('Unique message', 'Extra info', 'just like in Oak.log');
 const key = Oak.time();
 
 Oak.timeEnd(key, 'Extra info', 'just like in Oak.log');
+```
+
+##### Preview:
+![Time Functions](./docs/time.png)
+
+```js
+// Function to time
+async function fnToTime() {
+	return new Promise(resolve => setTimeout(resolve, 3000));
+}
 
 // Time functions (Returns a promise)
 
@@ -45,6 +53,9 @@ Oak.logTimeTaken(fnToTime);
 
 Oak.logTimeTaken({label: 'Timer'}, 'Just like', 'Oak.log', fnToTime);
 ```
+
+##### Preview:
+![Time functions](./docs/functionTime.png)
 
 #### Create Instances
 
@@ -62,6 +73,9 @@ const oak2 = new Oak({label: 'new', info: 'This is instance oak2'});
 oak2.warn('Extra info will be attached');
 ```
 
+##### Preview:
+![Instances with preset options](./docs/instance.png)
+
 #### Error parsing
 
 ```js
@@ -69,6 +83,9 @@ import {Oak} from '@smpx/oak';
 
 Oak.error('Message for understanding context', new Error('Error Message'));
 ```
+
+##### Preview:
+![Error Parsing](./docs/error.png)
 
 ### Install Exception Handlers and Process Exit Handlers
 
@@ -79,4 +96,5 @@ Oak.installExceptionHandlers();
 Oak.installExitHandlers();
 
 ```
-
+##### Preview:
+![Exit handlers](./docs/exit.png)

@@ -238,6 +238,7 @@ commander
 	.usage('[app] [options]')
 	.option('-p, --path [dir]', 'Path given to filelogs (default is logs folder in root dir)')
 	.option('--file, --table', 'Table option given to FileLogs (default is \'log\')')
+	.option('-d, --date', 'Date for which to view logs [format: DD-MM-YYYY]')
 	.option('--err, --error', 'Only show errors')
 	.option('--lines [lines]', 'Show this many previous lines (default 10)', parseInt)
 	.option('--level [levels]', 'Only show these levels, --levels=info,err')
@@ -314,8 +315,8 @@ if (commander.grep) {
 }
 
 const directory = commander.path || `${process.cwd()}/logs`;
-const currentDate = new Date();
-const formattedDate = `${currentDate.getFullYear()}-${_.padStart(currentDate.getMonth() + 1, 2, '0')}-${_.padStart(currentDate.getDate(), 2, '0')}`;
+const date = commander.date ? new Date(commander.date) : new Date();
+const formattedDate = `${date.getFullYear()}-${_.padStart(date.getMonth() + 1, 2, '0')}-${_.padStart(date.getDate(), 2, '0')}`;
 const file = `${directory}/${formattedDate}-${commander.table || 'log'}.json`;
 const stream = tail(file, {
 	numLines: options.lines,

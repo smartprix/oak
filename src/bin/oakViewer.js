@@ -3,7 +3,6 @@
 import _ from 'lodash';
 import util from 'util';
 import Chalk from 'chalk';
-import moment from 'moment';
 import tail from '@smpx/tail';
 import commander from 'commander';
 
@@ -315,8 +314,9 @@ if (commander.grep) {
 }
 
 const directory = commander.path || `${process.cwd()}/logs`;
-const currentDate = moment().format('YYYY-MM-DD');
-const file = `${directory}/${currentDate}-${commander.table || 'log'}.json`;
+const currentDate = new Date();
+const formattedDate = `${currentDate.getFullYear()}-${_.padStart(currentDate.getMonth() + 1, 2, '0')}-${_.padStart(currentDate.getDate(), 2, '0')}`;
+const file = `${directory}/${formattedDate}-${commander.table || 'log'}.json`;
 const stream = tail(file, {
 	numLines: options.lines,
 	watch: true,

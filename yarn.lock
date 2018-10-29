@@ -627,6 +627,11 @@
     commander "^2.19.0"
     sm-utils "^2.15.3"
 
+"@smpx/tail@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@smpx/tail/-/tail-0.1.0.tgz#7070195393b4145e0fcc33762a69524e1341a8dc"
+  integrity sha512-Vd20jnuDRBLqffqGHc/JMZ6CgLeQVFDGq+fIp6qN8tTRmRiQlpbQiRSyBYdp8eIMxdaX7j1skA5FQ7Rww3yX6Q==
+
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@types/babel-types/-/babel-types-7.0.4.tgz#bfd5b0d0d1ba13e351dff65b6e52783b816826c8"

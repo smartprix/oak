@@ -53,7 +53,14 @@ const levelColors = {
 function formatTime(data, ctx) {
 	if (!data.createdAt) return '';
 	ctx.bgColor = 'lightsteelblue';
-	const time = moment(data.createdAt).format('DD MMM HH:mm:ss A');
+	const time = new Date(data.createdAt).toLocaleDateString('en', {
+		hourCycle: 'h12',
+		hour: '2-digit',
+		month: 'short',
+		day: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+	});
 	return chalk.bgKeyword(ctx.bgColor).keyword('black')(` ${time} `);
 }
 

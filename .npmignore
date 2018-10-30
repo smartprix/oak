@@ -4,5 +4,4 @@ node_modules
 src
 test
 garbage
-docs
 yarn.lock

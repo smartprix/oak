@@ -10,8 +10,8 @@ declare module '@smpx/oak' {
 	class BasicLogs {
 		constructor(opts: {level: level});
 		log(info: plainObject): void;
-		formatter(info): any;
-		filterLogs(info: plainObject, level: level): boolean;
+		static formatter(info): any;
+		static filterLogs(info: plainObject, level: level): boolean;
 	}
 
 	class ConsoleLogs extends BasicLogs {
@@ -19,7 +19,7 @@ declare module '@smpx/oak' {
 
 	class FileLogs extends BasicLogs {
 		constructor(opts: {level: level, path: string, table: string, filter: boolean})
-		_getStream(opts: {path: string, table: string, regenerate?: boolean}): WriteStream;
+		static _getStream(opts: {path: string, table: string, regenerate?: boolean}): WriteStream;
 	}
 
 	class Oak {

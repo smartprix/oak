@@ -302,6 +302,7 @@ class Oak {
 
 	static setTransports(transports = new ConsoleLogs()) {
 		if (!_.isArray(transports)) transports = [transports];
+		this.transports = transports;
 	}
 }
 

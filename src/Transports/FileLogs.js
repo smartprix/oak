@@ -20,7 +20,7 @@ class FileLogs extends BasicLogs {
 	 * @param {boolean} opts.filter
 	 * @param {}
 	 */
-	constructor({table, level = 'silly', path = `${process.cwd()}/logs`, filter = false} = {}) {
+	constructor({table = 'log', level = 'silly', path = `${process.cwd()}/logs`, filter = false} = {}) {
 		super({level});
 		this.path = path;
 		this.table = table;

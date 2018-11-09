@@ -27,6 +27,7 @@ declare module '@smpx/oak' {
 	
 		updateOptions(opts: object): void;
 		getChild(opts?: object | string): Oak;
+		setTransports<T extends BasicLogs>(transports: T | T[]): void;
 	
 		log(...args: any[]): void;
 		log(opts: plainObject, ...args: any[]): void;

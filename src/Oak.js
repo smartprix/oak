@@ -200,7 +200,8 @@ class Oak {
 	}
 
 	/**
-	 * Returns a child logger with the same options as the current one plus any extra provided
+	 * Returns a child logger with the same options and transport
+	 * as the current one plus any extra provided
 	 * @param {string|object} opts
 	 * @returns {Oak}
 	 */
@@ -212,7 +213,11 @@ class Oak {
 		else {
 			childOpts = {label: String(opts)};
 		}
-		return new Oak(_.defaultsDeep(childOpts, this.options));
+		const child = new Oak(_.defaultsDeep(childOpts, this.options));
+		if (this.transports) {
+			child.setTransports(this.transports);
+		}
+		return child;
 	}
 
 	setTransports(transports = new ConsoleLogs()) {

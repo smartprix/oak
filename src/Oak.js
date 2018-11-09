@@ -107,7 +107,10 @@ class Oak {
 			opts.message = 'undefined';
 		}
 
-		Oak.transports.forEach((transport) => {
+		let transports;
+		if (this.transports) transports = this.transports;
+		else transports = Oak.transports;
+		transports.forEach((transport) => {
 			if (transport.log) {
 				transport.log(_.defaultsDeep(opts, this.options));
 			}
@@ -210,6 +213,11 @@ class Oak {
 			childOpts = {label: String(opts)};
 		}
 		return new Oak(_.defaultsDeep(childOpts, this.options));
+	}
+
+	setTransports(transports = new ConsoleLogs()) {
+		if (!_.isArray(transports)) transports = [transports];
+		this.transports = transports;
 	}
 
 	/**

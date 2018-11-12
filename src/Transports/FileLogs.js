@@ -3,10 +3,16 @@ import BasicLogs from './BasicLogs';
 
 // Oak is not used in this file, because oak itself uses this
 
-function fileNameGenerator() {
-	const currentDate = new Date();
-	const formattedDate = `${currentDate.getFullYear()}-${_.padStart(currentDate.getMonth() + 1, 2, '0')}-${_.padStart(currentDate.getDate(), 2, '0')}`;
-	return `${formattedDate}-${this}.json`;
+/**
+ * @see https://www.npmjs.com/package/rotating-file-stream#function-filenametime-index
+ * @param {Date} time
+ * @param {number} index
+ */
+function fileNameGenerator(time) {
+	if (!time) return `${this}.json`;
+
+	const currentDate = moment(time).format('YYYY-MM-DD');
+	return `${currentDate}-${this}.json`;
 }
 
 class FileLogs extends BasicLogs {

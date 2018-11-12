@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import rotatingFileStream from 'rotating-file-stream';
 import BasicLogs from './BasicLogs';
 
@@ -11,7 +12,7 @@ import BasicLogs from './BasicLogs';
 function fileNameGenerator(time) {
 	if (!time) return `${this}.json`;
 
-	const currentDate = moment(time).format('YYYY-MM-DD');
+	const currentDate = `${time.getFullYear()}-${_.padStart(time.getMonth() + 1, 2, '0')}-${_.padStart(time.getDate(), 2, '0')}`;
 	return `${currentDate}-${this}.json`;
 }
 

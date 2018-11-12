@@ -15,6 +15,8 @@ function fileNameGenerator(time) {
 	return `${currentDate}-${this}.json`;
 }
 
+let counter = 0;
+
 class FileLogs extends BasicLogs {
 	static logStreams = {};
 
@@ -82,11 +84,18 @@ class FileLogs extends BasicLogs {
 			console.error(`${new Date().toLocaleString()} [FileStream] error: Could not start file stream`, err);
 			return null;
 		}
+		counter++;
 
-		console.log(`${new Date().toLocaleString()} [FileStream] silly: New File Write Stream: ${path}/${table}.json`);
+		newStream.on('open', (filename) => {
+			console.log(`${new Date().toLocaleString()} [FileStream] silly: Counter: ${counter}, New File: ${filename}`);
+		});
+
+		newStream.on('warning', (err) => {
+			console.error(`${new Date().toLocaleString()} [FileStream] warn: Counter: ${counter}, Error in file stream ${key},`, err);
+		});
 
 		newStream.on('error', (err) => {
-			console.error(`${new Date().toLocaleString()} [FileStream] error: Error in file stream ${key},`, err);
+			console.error(`${new Date().toLocaleString()} [FileStream] error: Counter: ${counter}, Error in file stream ${key},`, err);
 			// reopen stream
 			setImmediate(() => this._getStream({table, regenerate: true, path}));
 		});

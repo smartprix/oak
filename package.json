@@ -73,6 +73,10 @@
     "sourceMaps": true
   },
   "eslintConfig": {
-    "extends": "smartprix"
+    "extends": "smartprix",
+    "env": {
+      "node": true,
+      "browser": false
+    }
   }
 }

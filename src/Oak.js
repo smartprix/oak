@@ -7,10 +7,11 @@ import {getGlobalOptions, setGlobalOptions} from './helpers';
 
 class Oak {
 	/**
+	 * this is for types support
 	 * @see https://github.com/Microsoft/TypeScript/issues/3841#issuecomment-337560146
 	 * @type {typeof Oak}
 	 */
-	['constructor'];
+	['constructor'] = this.constructor;
 
 	static transports = [new ConsoleLogs()];
 

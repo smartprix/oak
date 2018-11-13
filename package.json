@@ -6,8 +6,8 @@
   "scripts": {
     "build": "babel-changed --source-maps false",
     "lint": "eslint src",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run lint && npm run build"
+    "test": "mocha -r @babel/register",
+    "prepublish": "npm run lint && npm run build && npm run test"
   },
   "repository": {
     "type": "git",
@@ -45,9 +45,12 @@
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "@smpx/babel-changed": "^0.2.0",
+    "chai": "^4.2.0",
     "eslint": "^5.7.0",
-    "eslint-config-smartprix": "^3.4.2"
+    "eslint-config-smartprix": "^3.4.2",
+    "mocha": "^5.2.0"
   },
   "babel": {
     "presets": [

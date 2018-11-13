@@ -6,6 +6,12 @@ import {ConsoleLogs} from './Transports';
 import {getGlobalOptions, setGlobalOptions} from './helpers';
 
 class Oak {
+	/**
+	 * @see https://github.com/Microsoft/TypeScript/issues/3841#issuecomment-337560146
+	 * @type {typeof Oak}
+	 */
+	['constructor'];
+
 	static transports = [new ConsoleLogs()];
 
 	/**
@@ -25,7 +31,7 @@ class Oak {
 		this.timers = new Map();
 	}
 	/**
-	 * @ignore
+	 * @private
 	 * @param {Error} err
 	 * @returns {object}
 	 */
@@ -51,7 +57,7 @@ class Oak {
 	}
 
 	/**
-	 * @ignore
+	 * @private
 	 * @param {any[]} args
 	 * @param {string|object} level or options object
 	 */
@@ -73,7 +79,7 @@ class Oak {
 		}
 		// Handles special case log('msg', new Error('err'))
 		else if (rest.length === 2 && _.isString(rest[0]) && _.isError(rest[1])) {
-			opts = Oak._parseError(rest[1], opts);
+			opts = this.constructor._parseError(rest[1], opts);
 			if (!opts.level) opts.level = 'error';
 			message = rest[0];
 		}
@@ -82,7 +88,7 @@ class Oak {
 				const arg = rest[i];
 				if (arg instanceof Error) {
 					// Log any errors individually
-					const errorObj = Oak._parseError(arg, opts);
+					const errorObj = this.constructor._parseError(arg, opts);
 					if (!errorObj.level) errorObj.level = 'error';
 					this._logWithLevel([errorObj, arg.message]);
 					rest[i] = `${errorObj.error.name}: ${arg.message}`;
@@ -107,7 +113,7 @@ class Oak {
 			opts.message = 'undefined';
 		}
 
-		const transports = this.transports || Oak.transports;
+		const transports = this.transports || this.constructor.transports;
 		transports.forEach((transport) => {
 			if (transport.log) {
 				transport.log(_.defaultsDeep(opts, this.options));
@@ -162,7 +168,7 @@ class Oak {
 	time(key) {
 		if (!key) key = Math.random();
 		if (this.timers.size > 1000) {
-			Oak.warn('Possible memory leak in oak timers');
+			this.constructor.warn({label: 'Oak'}, 'Possible memory leak in oak timers');
 			return key;
 		}
 		this.timers.set(key, process.hrtime());
@@ -211,7 +217,7 @@ class Oak {
 		else {
 			childOpts = {label: String(opts)};
 		}
-		const child = new Oak(_.defaultsDeep(childOpts, this.options));
+		const child = new this.constructor(_.defaultsDeep(childOpts, this.options));
 		if (this.transports) {
 			child.setTransports(this.transports);
 		}
@@ -228,7 +234,7 @@ class Oak {
 	 * @returns {Oak}
 	 */
 	static get default() {
-		if (!this._defaultOak) this._defaultOak = new Oak('Default');
+		if (!this._defaultOak) this._defaultOak = new this('Default');
 		return this._defaultOak;
 	}
 
@@ -283,29 +289,29 @@ class Oak {
 
 	static installExitHandlers() {
 		process.on('exit', (code) => {
-			Oak.info({code}, 'Process exited with code', code);
+			this.info({code}, 'Process exited with code', code);
 			System.exit(code);
 		});
 
 		process.once('SIGINT', () => {
-			Oak.info('Received SIGINT.');
+			this.info('Received SIGINT.');
 			System.exit();
 		});
 
 		process.once('SIGTERM', () => {
-			Oak.info('Received SIGTERM.');
+			this.info('Received SIGTERM.');
 			System.exit();
 		});
 	}
 
 	static installExceptionHandlers() {
 		process.on('uncaughtException', (error) => {
-			Oak.error('Uncaught Exception', error);
+			this.error('Uncaught Exception', error);
 			System.exit(1);
 		});
 
 		process.on('unhandledRejection', (error) => {
-			Oak.error('Unhandled Rejection', error);
+			this.error('Unhandled Rejection', error);
 		});
 	}
 

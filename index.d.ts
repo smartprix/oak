@@ -8,7 +8,7 @@ declare module '@smpx/oak' {
 	type level = 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly';
 	
 	class BasicLogs {
-		constructor(opts: {level: level});
+		constructor(opts?: {level?: level});
 		log(info: plainObject): void;
 		static formatter(info): any;
 		static filterLogs(info: plainObject, level: level): boolean;
@@ -18,7 +18,7 @@ declare module '@smpx/oak' {
 	}
 
 	class FileLogs extends BasicLogs {
-		constructor(opts: {level: level, path: string, table: string, filter: boolean})
+		constructor(opts: {level?: level, path: string, table: string, filter: boolean})
 		static _getStream(opts: {path: string, table: string, regenerate?: boolean}): WriteStream;
 	}
 
@@ -26,7 +26,7 @@ declare module '@smpx/oak' {
 		constructor(opts?: object | string);
 	
 		updateOptions(opts: object): void;
-		getChild(opts?: object | string): Oak;
+		getChild<T extends Oak>(this: T, opts?: object | string): T;
 		setTransports<T extends BasicLogs>(transports: T | T[]): void;
 	
 		log(...args: any[]): void;
@@ -80,7 +80,7 @@ declare module '@smpx/oak' {
 		static setGlobalOptions(options: plainObject): void;
 
 		static setTransports<T extends BasicLogs>(transports: T | T[]): void;
-	
+		// TODO: convert to function and return T extends Oak type
 		static default: Oak;
 	}
 }

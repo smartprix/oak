@@ -6,10 +6,12 @@ import {
 } from '../src';
 
 describe('should log to console', () => {
-	const logs = [];
-	const errors = [];
+	let logs = [];
+	let errors = [];
 	const originalLog = console.log;
 	const originalError = console.error;
+	let oak;
+
 	before(() => {
 		console.log = (...args) => {
 			logs.push(...args);
@@ -18,9 +20,15 @@ describe('should log to console', () => {
 			errors.push(...args);
 		};
 		Oak.setGlobalOptions({});
+		oak = new Oak('tester');
 	});
 
-	it('test static fns', async () => {
+	beforeEach(() => {
+		logs = [];
+		errors = [];
+	});
+
+	it('test static fns', () => {
 		Oak.log('test');
 		Oak.silly('silly');
 		Oak.info('info');
@@ -31,6 +39,29 @@ describe('should log to console', () => {
 		Oak.error('error');
 		expect(logs.length).to.equal(5);
 		expect(errors.length).to.equal(2);
+	});
+
+	it('test instance fns', () => {
+		oak.log('test');
+		oak.silly('silly');
+		oak.info('info');
+		oak.debug('debug');
+		oak.verbose('verbose');
+
+		oak.warn('warn');
+		oak.error('error');
+		expect(logs.length).to.equal(5);
+		expect(errors.length).to.equal(2);
+	});
+
+	it('test label change on instance', () => {
+		Oak.log('test');
+		oak.log('test');
+		const classLog = logs[0];
+		const instanceLog = logs[1];
+
+		expect(classLog).to.equal(`\u001b[0m${new Date().toLocaleString()}\u001b[0m \u001b[0m\u001b[1m[Default] \u001b[0m\u001b[0m\u001b[1msilly\u001b[0m: \u001b[0mtest\u001b[0m`);
+		expect(instanceLog).to.equal(`\u001b[0m${new Date().toLocaleString()}\u001b[0m \u001b[0m\u001b[1m[tester] \u001b[0m\u001b[0m\u001b[1msilly\u001b[0m: \u001b[0mtest\u001b[0m`);
 	});
 
 	after(() => {

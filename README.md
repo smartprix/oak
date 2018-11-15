@@ -1,3 +1,9 @@
+<a href="https://travis-ci.com/smartprix/oak"><img src="https://travis-ci.com/smartprix/oak.svg?branch=master" alt="Travis"></a>
+<a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/v/@smpx/oak.svg" alt="Version"></a>
+<a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/dm/@smpx/oak.svg" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/l/@smpx/oak.svg" alt="License"></a>
+
+
 # oak
 A simple logger that writes to json file, console, or any other custom transport.
 

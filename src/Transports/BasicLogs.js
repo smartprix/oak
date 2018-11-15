@@ -50,6 +50,6 @@ export default class BasicLogs {
 		// Log invalid level value
 		if (!_.isSafeInteger(level) || !_.isSafeInteger(infoLevel)) return false;
 
-		return infoLevel > level;
+		return infoLevel <= level;
 	}
 }

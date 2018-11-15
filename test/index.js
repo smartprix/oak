@@ -64,29 +64,13 @@ describe('test all functions', () => {
 		expect(instanceLog).to.equal(`\u001b[0m${new Date().toLocaleString()}\u001b[0m \u001b[0m\u001b[1m[tester] \u001b[0m\u001b[0m\u001b[1msilly\u001b[0m: \u001b[0mtest\u001b[0m`);
 	});
 
-	it('error parsing', () => {
-		Oak.error({label: 'err'}, 'test message', new Error('err message'));
-		expect(errors[0]).to.equal(`\u001b[31m${new Date().toLocaleString()}\u001b[0m \u001b[31m\u001b[1m[err] \u001b[0m\u001b[31m\u001b[1merror\u001b[0m: \u001b[31mtest message\n\u001b[0m\u001b[31mError: err message\n    at Context.it (/home/smpx-170l/projects/oak/test/index.js:68:45)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:372:21)\n    at Test.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at Runner.runTest (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:455:10)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:573:12\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:369:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:379:7\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:303:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:342:7\n    at done (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:319:5)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:395:7)\n    at Hook.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:317:10)\n    at Immediate._onImmediate (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:347:5)\n    at runCallback (timers.js:705:18)\n    at tryOnImmediate (timers.js:676:5)\n    at processImmediate (timers.js:658:5)\u001b[0m`);
-
-		Oak.error({label: 'err'}, new Error('err message'));
-		expect(errors[1]).to.equal(`\u001b[31m${new Date().toLocaleString()}\u001b[0m \u001b[31m\u001b[1m[err] \u001b[0m\u001b[31m\u001b[1merror\u001b[0m: \u001b[31merr message\n\u001b[0m\u001b[31mError: err message\n    at Context.it (/home/smpx-170l/projects/oak/test/index.js:71:29)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:372:21)\n    at Test.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at Runner.runTest (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:455:10)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:573:12\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:369:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:379:7\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:303:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:342:7\n    at done (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:319:5)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:395:7)\n    at Hook.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:317:10)\n    at Immediate._onImmediate (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:347:5)\n    at runCallback (timers.js:705:18)\n    at tryOnImmediate (timers.js:676:5)\n    at processImmediate (timers.js:658:5)\u001b[0m`);
-		expect(errors.length).to.equal(2);
-	});
-
-	it('should log erros seperately', () => {
-		Oak.warn('some', 'random', 5, 'things', new Error('err message'));
-		expect(errors.length).to.equal(2);
-		expect(errors[0]).to.equal(`\u001b[33m${new Date().toLocaleString()}\u001b[0m \u001b[33m\u001b[1m[Default] \u001b[0m\u001b[33m\u001b[1mwarn\u001b[0m: \u001b[33merr message\n\u001b[0m\u001b[33mError: err message\n    at Context.it (/home/smpx-170l/projects/oak/test/index.js:77:43)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:372:21)\n    at Test.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at Runner.runTest (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:455:10)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:573:12\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:369:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:379:7\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:303:14)\n    at /home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:342:7\n    at done (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:319:5)\n    at callFn (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:395:7)\n    at Hook.Runnable.run (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runnable.js:364:7)\n    at next (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:317:10)\n    at Immediate._onImmediate (/home/smpx-170l/projects/oak/node_modules/mocha/lib/runner.js:347:5)\n    at runCallback (timers.js:705:18)\n    at tryOnImmediate (timers.js:676:5)\n    at processImmediate (timers.js:658:5)\u001b[0m`);
-		expect(errors[1]).to.equal(`\u001b[33m${new Date().toLocaleString()}\u001b[0m \u001b[33m\u001b[1m[Default] \u001b[0m\u001b[33m\u001b[1mwarn\u001b[0m: \u001b[33msome random 5 things Error: err message\u001b[0m`);
-	});
-
 	after(() => {
 		console.log = originalLog;
 		console.error = originalError;
 	});
 });
 
-describe('should set transport and tests with custom transport', () => {
+describe('Tests with custom transport', () => {
 	let logs = [];
 	let skipped = [];
 	before(() => {
@@ -100,7 +84,7 @@ describe('should set transport and tests with custom transport', () => {
 			}
 		}
 
-		Oak.setTransports(new TestLogs('error'));
+		Oak.setTransports(new TestLogs({level: 'error'}));
 	});
 
 	beforeEach(() => {
@@ -167,6 +151,65 @@ describe('should set transport and tests with custom transport', () => {
 			label: 'Default',
 		});
 	});
+
+	it('filters should work', () => {
+		Oak.error('test');
+		expect(logs.length).to.equal(0);
+		expect(skipped.length).to.equal(1);
+	});
+
+	it('error parsing', () => {
+		Oak.error({label: 'err'}, 'test message', new Error('err message'));
+		delete skipped[0].error.stack;
+		delete skipped[0].createdAt;
+		expect(skipped[0]).to.deep.equal({
+			label: 'err',
+			level: 'error',
+			message: 'test message',
+			error: {
+				message: 'err message',
+				name: 'Error',
+			},
+		});
+
+		Oak.error({label: 'err'}, new Error('err message'));
+		delete skipped[1].error.stack;
+		delete skipped[1].createdAt;
+		expect(skipped[1]).to.deep.equal({
+			label: 'err',
+			level: 'error',
+			message: 'err message',
+			error: {
+				message: 'err message',
+				name: 'Error',
+			},
+		});
+		expect(skipped.length).to.equal(2);
+	});
+
+	it('should log erros seperately', () => {
+		Oak.warn('some', 'random', 5, 'things', new Error('err message'));
+		expect(logs.length).to.equal(2);
+
+		delete logs[0].error.stack;
+		delete logs[0].createdAt;
+		delete logs[1].createdAt;
+		expect(logs[0]).to.deep.equal({
+			message: 'err message',
+			level: 'warn',
+			error: {
+				message: 'err message',
+				name: 'Error',
+			},
+			label: 'Default',
+		});
+		expect(logs[1]).to.deep.equal({
+			message: 'some random 5 things Error: err message',
+			level: 'warn',
+			label: 'Default',
+		});
+	});
+
 
 	after(() => {
 		Oak.setTransports(new ConsoleLogs());

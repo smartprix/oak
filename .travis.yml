@@ -6,6 +6,7 @@ cache: yarn
 before_script:
   - yarn global add typescript
 script:
+  - yarn build
   - yarn test
   - yarn compile
 git:

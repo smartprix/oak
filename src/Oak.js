@@ -12,8 +12,10 @@ class Oak {
 	 * @type {typeof Oak}
 	 */
 	['constructor'] = this.constructor;
+	_isOak = true;
 
 	static transports = [new ConsoleLogs()];
+	static _isOak = true;
 
 	/**
 	 * Get a logger instance with some options pre set

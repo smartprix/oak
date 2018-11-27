@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "babel-changed --source-maps false",
-    "lint": "eslint src",
+    "lint": "eslint src test",
     "test": "c8 --reporter=html --reporter=text mocha -r @babel/register",
     "test-only": "mocha -r @babel/register",
     "compile": "tsc",

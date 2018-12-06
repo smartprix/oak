@@ -6,3 +6,6 @@ test
 garbage
 yarn.lock
 docs
+coverage
+.travis.yml
+tsconfig.json

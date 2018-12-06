@@ -74,6 +74,7 @@ class FileLogs extends BasicLogs {
 		let newStream;
 
 		try {
+			if (counter > 10) throw new Error('File stream errored too many times');
 			newStream = rotatingFileStream(fileNameGenerator.bind(table), {
 				interval: '1d',
 				maxFiles: 10,
@@ -86,6 +87,7 @@ class FileLogs extends BasicLogs {
 			return null;
 		}
 		counter++;
+
 
 		newStream.on('open', (filename) => {
 			console.log(`${new Date().toLocaleString()} [FileStream] silly: Counter: ${counter}, New File: ${filename}`);

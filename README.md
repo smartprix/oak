@@ -2,6 +2,8 @@
 <a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/v/@smpx/oak.svg" alt="Version"></a>
 <a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/dm/@smpx/oak.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/@smpx/oak"><img src="https://img.shields.io/npm/l/@smpx/oak.svg" alt="License"></a>
+<a href="https://david-dm.org/smartprix/oak"><img src="https://david-dm.org/smartprix/oak/status.svg" alt="Dependencies"></a>
+<a href="https://david-dm.org/smartprix/oak?type=dev"><img src="https://david-dm.org/smartprix/oak/dev-status.svg" alt="Dev Dependencies"></a>
 
 
 # oak

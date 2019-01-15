@@ -228,8 +228,7 @@ class Oak {
 	}
 
 	setTransports(transports = new ConsoleLogs()) {
-		if (!_.isArray(transports)) transports = [transports];
-		this.transports = transports;
+		this.transports = _.castArray(transports);
 	}
 
 	/**
@@ -321,8 +320,7 @@ class Oak {
 	static setGlobalOptions = setGlobalOptions;
 
 	static setTransports(transports = new ConsoleLogs()) {
-		if (!_.isArray(transports)) transports = [transports];
-		this.transports = transports;
+		this.transports = _.castArray(transports);
 	}
 }
 

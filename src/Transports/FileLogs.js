@@ -51,7 +51,10 @@ class FileLogs extends BasicLogs {
 	 */
 	log(info) {
 		const stream = this.constructor._getStream(this);
-		if (!stream) return;
+		if (!stream) {
+			console.log(info);
+			return;
+		}
 		if (this.filter && this.constructor.filterLogs(info, this.level)) return;
 		try {
 			stream.write(this.constructor.formatter(info));

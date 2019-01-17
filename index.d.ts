@@ -28,7 +28,7 @@ declare module '@smpx/oak' {
 		updateOptions(opts: object): void;
 		getChild<T extends Oak>(this: T, opts?: object | string): T;
 		setTransports<T extends BasicLogs>(transports: T | T[]): void;
-	
+
 		log(...args: any[]): void;
 		log(opts: plainObject, ...args: any[]): void;
 		silly(...args: any[]): void;
@@ -53,7 +53,10 @@ declare module '@smpx/oak' {
 		options: {
 			[key: string]: any,
 		};
-	
+		_isOak: true;
+
+		static _isOak: true;
+
 		static log(...args: any[]): void;
 		static log(opts: plainObject, ...args: any[]): void;
 		static silly(...args: any[]): void;
@@ -68,7 +71,7 @@ declare module '@smpx/oak' {
 		static warn(opts: plainObject, ...args: any[]): void;
 		static error(...args: any[]): void;
 		static error(opts: plainObject, ...args: any[]): void;
-	
+
 		static time(key?: string): string | number;
 		static timeEnd(key:string | number, ...arg: any[]): number;
 		static logTimeTaken<T>(fn: () => Promise<T> | T):Promise<T>;

@@ -116,7 +116,7 @@ class Oak {
 			opts.message = 'undefined';
 		}
 
-		const transports = this.transports || this.constructor.transports;
+		const transports = [...this.constructor.transports, ...(this.transports || [])];
 		transports.forEach((transport) => {
 			if (transport.log) {
 				transport.log(_.defaultsDeep(opts, this.options));

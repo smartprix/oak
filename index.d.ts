@@ -10,7 +10,7 @@ declare module '@smpx/oak' {
 	class BasicLogs {
 		constructor(opts?: {level?: level});
 		log(info: plainObject): void;
-		static formatter(info): any;
+		static formatter(info: plainObject): any;
 		static filterLogs(info: plainObject, level: level): boolean;
 	}
 

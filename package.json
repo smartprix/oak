@@ -1,6 +1,6 @@
 {
   "name": "@smpx/oak",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "A simple logger that writes to json file, console, or both",
   "main": "dist/index.js",
   "scripts": {

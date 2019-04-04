@@ -86,4 +86,13 @@ declare module '@smpx/oak' {
 		// TODO: convert to function and return T extends Oak type
 		static default: Oak;
 	}
+
+	export default Oak;
+
+	export {
+		BasicLogs,
+		FileLogs,
+		ConsoleLogs,
+		Oak,
+	}
 }

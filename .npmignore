@@ -4,6 +4,8 @@ node_modules
 src
 test
 garbage
+# Lock files (this is a library)
+package-lock.json
 yarn.lock
 docs
 coverage
